@@ -48,8 +48,8 @@ class EnterprisePhonebookTest {
 
         enterprisePhonebook.add("Ted", "1234")
 
-        val expectedCall1 = BadPhonebookEntryEvent(2, "Ted", "1234", Map.entry<String?, String?>("Bob", "12345"))
-        val expectedCall2 = BadPhonebookEntryEvent(2, "Ted", "1234", Map.entry<String?, String?>("Sid", "12346"))
+        val expectedCall1 = BadPhonebookEntryEvent(2, "Ted", "1234", Pair("Bob", "12345"))
+        val expectedCall2 = BadPhonebookEntryEvent(2, "Ted", "1234", Pair("Sid", "12346"))
         assertEquals(listOf(expectedCall1, expectedCall2), spyAlerter.clashes.toList())
         // Verify only Bob and Sid are in the phonebook
         assertEquals(2, enterprisePhonebook.phonebook.size())

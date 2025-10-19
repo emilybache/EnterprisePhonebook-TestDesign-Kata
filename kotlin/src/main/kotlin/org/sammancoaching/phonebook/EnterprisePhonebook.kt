@@ -26,7 +26,8 @@ class EnterprisePhonebook(
                     phonebook.size(),
                     name,
                     number,
-                    entry)
+                    entry.toPair()
+                )
                 alerter.sendAlert(event)
             }
         }
