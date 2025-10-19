@@ -2,7 +2,7 @@ package org.sammancoaching.phonebook
 
 
 class EnterprisePhonebook(
-    private val phonebook: Phonebook,
+    val phonebook: Phonebook,
     private val authorizer: Authorizer,
     private val alerter: Alerter,
 ) {
