@@ -4,42 +4,44 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import pytest
 
 
-class SpyHandler(BaseHTTPRequestHandler):
+class TestDoubleHandler(BaseHTTPRequestHandler):
     response_code = 200
     message = "OK"
     latest_request_type = None
+    latest_request_path = None
     latest_request_body = None
 
     @staticmethod
     def reset():
-        SpyHandler.response_code = 200
-        SpyHandler.message = "OK"
-        SpyHandler.latest_request_type = None
-        SpyHandler.latest_request_body = None
+        TestDoubleHandler.response_code = 200
+        TestDoubleHandler.message = "OK"
+        TestDoubleHandler.latest_request_type = None
+        TestDoubleHandler.latest_request_body = None
 
     def do_GET(self):
-        SpyHandler.latest_request_type = "GET"
-        if SpyHandler.response_code == 200:
-            self.send_response(200, message=SpyHandler.message)
+        TestDoubleHandler.latest_request_type = "GET"
+        TestDoubleHandler.latest_request_path = self.path
+        if TestDoubleHandler.response_code == 200:
+            self.send_response(200, message=TestDoubleHandler.message)
             self.end_headers()
         else:
-            self.send_error(SpyHandler.response_code, message=SpyHandler.message)
+            self.send_error(TestDoubleHandler.response_code, message=TestDoubleHandler.message)
 
     def do_PUT(self):
-        SpyHandler.latest_request_type = "PUT"
+        TestDoubleHandler.latest_request_type = "PUT"
         length = int(self.headers['content-length'])
-        SpyHandler.latest_request_body = self.rfile.read(length)
-        if SpyHandler.response_code == 200:
-            self.send_response(200, message=SpyHandler.message)
+        TestDoubleHandler.latest_request_body = self.rfile.read(length)
+        if TestDoubleHandler.response_code == 200:
+            self.send_response(200, message=TestDoubleHandler.message)
             self.end_headers()
         else:
-            self.send_error(SpyHandler.response_code, message=SpyHandler.message)
+            self.send_error(TestDoubleHandler.response_code, message=TestDoubleHandler.message)
 
 
 @pytest.fixture
-def spy_handler():
-    yield SpyHandler
-    SpyHandler.reset()
+def test_double_handler():
+    yield TestDoubleHandler
+    TestDoubleHandler.reset()
 
 
 @pytest.fixture
@@ -56,8 +58,8 @@ def url(host, port):
     return f"http://{host}:{port}"
 
 @pytest.fixture(autouse=True)
-def http_server(host, port, spy_handler):
-    httpd = ThreadingHTTPServer((host, port), spy_handler)
+def http_server(host, port, test_double_handler):
+    httpd = ThreadingHTTPServer((host, port), test_double_handler)
     server_thread = threading.Thread(target=lambda: httpd.serve_forever(poll_interval=0.01))
     server_thread.start()
 
