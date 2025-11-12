@@ -10,7 +10,8 @@ import java.net.http.HttpResponse
 
 
 /**
- * Demonstration test showing how to use LightweightHttpServer and HandlerTestDouble for testing HTTP clients.
+ * Unit test to check the LightweightHttpServer works correctly.
+ * This test is not a good example of how to use this class in your own tests though.
  */
 @ExtendWith(HttpServerLifecycle::class)
 class LightweightHttpServerTest {
