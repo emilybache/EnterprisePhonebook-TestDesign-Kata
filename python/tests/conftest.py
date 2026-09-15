@@ -8,6 +8,7 @@ class SpyHandler(BaseHTTPRequestHandler):
     response_code = 200
     message = "OK"
     latest_request_type = None
+    latest_request_path = None
     latest_request_body = None
 
     @staticmethod
@@ -15,10 +16,12 @@ class SpyHandler(BaseHTTPRequestHandler):
         SpyHandler.response_code = 200
         SpyHandler.message = "OK"
         SpyHandler.latest_request_type = None
+        SpyHandler.latest_request_path = None
         SpyHandler.latest_request_body = None
 
     def do_GET(self):
         SpyHandler.latest_request_type = "GET"
+        SpyHandler.latest_request_path = self.path
         if SpyHandler.response_code == 200:
             self.send_response(200, message=SpyHandler.message)
             self.end_headers()
@@ -27,6 +30,7 @@ class SpyHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         SpyHandler.latest_request_type = "PUT"
+        SpyHandler.latest_request_path = self.path
         length = int(self.headers['content-length'])
         SpyHandler.latest_request_body = self.rfile.read(length)
         if SpyHandler.response_code == 200:
