@@ -1,4 +1,4 @@
 Enterprise Phonebook Test Design Kata
 =====================================
 
-For practicing test design, and in particular narrow integration tests.
+For practicing test design, and in particular narrow integration tests. This branch contains a sample solution.
