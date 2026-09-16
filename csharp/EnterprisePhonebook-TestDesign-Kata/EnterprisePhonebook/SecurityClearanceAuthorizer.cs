@@ -13,12 +13,12 @@ public sealed class SecurityClearanceAuthorizer : IAuthorizer
         _httpClient = new HttpClient();
     }
 
-    public bool IsAuthorized()
+    public async Task<bool> IsAuthorizedAsync()
     {
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, _url + "/authenticate");
-            using var response = _httpClient.Send(request);
+            using var response = await _httpClient.SendAsync(request);
 
             // BUG: should be response.StatusCode == HttpStatusCode.OK
             return response.StatusCode != HttpStatusCode.Forbidden;

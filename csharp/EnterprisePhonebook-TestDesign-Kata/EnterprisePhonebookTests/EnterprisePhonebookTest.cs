@@ -6,14 +6,18 @@ public class EnterprisePhonebookTest
     {
         public bool ShouldAuthorize { get; set; } = true;
 
-        public bool IsAuthorized() => ShouldAuthorize;
+        public Task<bool> IsAuthorizedAsync() => Task.FromResult(ShouldAuthorize);
     }
 
     private sealed class SpyAlerter : IAlerter
     {
         public List<BadPhonebookEntryEvent> Events { get; } = new();
 
-        public void SendAlert(BadPhonebookEntryEvent alertEvent) => Events.Add(alertEvent);
+        public Task SendAlertAsync(BadPhonebookEntryEvent alertEvent)
+        {
+            Events.Add(alertEvent);
+            return Task.CompletedTask;
+        }
     }
 
     private Phonebook _phonebook = null!;
@@ -31,12 +35,12 @@ public class EnterprisePhonebookTest
     }
 
     [Test]
-    public void LookupAuthorized()
+    public async Task LookupAuthorized()
     {
         _phonebook.Add("Bob", "1234");
         _authorizer.ShouldAuthorize = true;
 
-        Assert.That(_enterprisePhonebook.Lookup("Bob"), Is.EqualTo("1234"));
+        Assert.That(await _enterprisePhonebook.LookupAsync("Bob"), Is.EqualTo("1234"));
     }
 
     [Test]
@@ -45,15 +49,15 @@ public class EnterprisePhonebookTest
         _phonebook.Add("Bob", "1234");
         _authorizer.ShouldAuthorize = false;
 
-        Assert.Throws<InvalidOperationException>(() => _enterprisePhonebook.Lookup("Bob"));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _enterprisePhonebook.LookupAsync("Bob"));
     }
 
     [Test]
-    public void AlertInconsistentEntryAttempts()
+    public async Task AlertInconsistentEntryAttempts()
     {
-        _enterprisePhonebook.Add("Bob", "12345");
-        _enterprisePhonebook.Add("Sid", "12346");
-        _enterprisePhonebook.Add("Ted", "1234");
+        await _enterprisePhonebook.AddAsync("Bob", "12345");
+        await _enterprisePhonebook.AddAsync("Sid", "12346");
+        await _enterprisePhonebook.AddAsync("Ted", "1234");
 
         var expected1 = new BadPhonebookEntryEvent(2, "Ted", "1234", new("Bob", "12345"));
         var expected2 = new BadPhonebookEntryEvent(2, "Ted", "1234", new("Sid", "12346"));
@@ -62,11 +66,11 @@ public class EnterprisePhonebookTest
     }
 
     [Test]
-    public void DoNotAddInconsistentEntry()
+    public async Task DoNotAddInconsistentEntry()
     {
-        _enterprisePhonebook.Add("Bob", "12345");
-        _enterprisePhonebook.Add("Sid", "12346");
-        _enterprisePhonebook.Add("Ted", "1234");
+        await _enterprisePhonebook.AddAsync("Bob", "12345");
+        await _enterprisePhonebook.AddAsync("Sid", "12346");
+        await _enterprisePhonebook.AddAsync("Ted", "1234");
 
         Assert.Throws<KeyNotFoundException>(() => _enterprisePhonebook.Phonebook.Lookup("Ted"));
         Assert.That(_enterprisePhonebook.Phonebook.Count, Is.EqualTo(2));

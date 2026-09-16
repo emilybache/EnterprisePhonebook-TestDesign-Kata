@@ -19,13 +19,13 @@ public class InconsistentPhonebookAlerterTest
     }
 
     [Test]
-    public void GenerateEvent()
+    public async Task GenerateEvent()
     {
         var server = HttpServerLifecycle.HttpServer;
         var alerter = new InconsistentPhonebookAlerter(server.Url);
         var alertEvent = new BadPhonebookEntryEvent(10, "Ted", "1234", new("Bob", "1234"));
 
-        alerter.SendAlert(alertEvent);
+        await alerter.SendAlertAsync(alertEvent);
 
         Assert.That(server.Handler.LatestRequestType, Is.EqualTo("PUT"));
         var receivedData = JsonSerializer.Deserialize<AlertData>(server.Handler.LatestRequestBody!);

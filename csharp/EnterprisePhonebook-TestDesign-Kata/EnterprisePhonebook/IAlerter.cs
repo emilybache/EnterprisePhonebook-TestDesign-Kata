@@ -2,5 +2,5 @@ namespace SammanCoaching.Phonebook;
 
 public interface IAlerter
 {
-    void SendAlert(BadPhonebookEntryEvent alertEvent);
+    Task SendAlertAsync(BadPhonebookEntryEvent alertEvent);
 }

@@ -15,7 +15,7 @@ public sealed class InconsistentPhonebookAlerter : IAlerter
         _httpClient = new HttpClient();
     }
 
-    public void SendAlert(BadPhonebookEntryEvent alertEvent)
+    public async Task SendAlertAsync(BadPhonebookEntryEvent alertEvent)
     {
         var data = alertEvent.ToAlertData();
         // BUG: should be System.Text.Json.JsonSerializer.Serialize(data)
@@ -25,7 +25,7 @@ public sealed class InconsistentPhonebookAlerter : IAlerter
         {
             Content = new StringContent(alertDataToSend, Encoding.UTF8, "application/json"),
         };
-        using var response = _httpClient.Send(request);
+        using var response = await _httpClient.SendAsync(request);
 
         if (response.StatusCode != HttpStatusCode.OK)
         {

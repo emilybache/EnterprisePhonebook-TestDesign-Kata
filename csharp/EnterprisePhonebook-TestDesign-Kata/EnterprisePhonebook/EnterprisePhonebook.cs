@@ -14,16 +14,16 @@ public sealed class EnterprisePhonebook
         _alerter = alerter;
     }
 
-    public string Lookup(string name)
+    public async Task<string> LookupAsync(string name)
     {
-        if (!_authorizer.IsAuthorized())
+        if (!await _authorizer.IsAuthorizedAsync())
         {
             throw new InvalidOperationException("unauthorized lookup");
         }
         return Phonebook.Lookup(name);
     }
 
-    public void Add(string name, string number)
+    public async Task AddAsync(string name, string number)
     {
         var clashes = Phonebook.FindClashes(number);
         if (clashes.Count == 0)
@@ -35,7 +35,7 @@ public sealed class EnterprisePhonebook
             foreach (var entry in clashes)
             {
                 var alertEvent = new BadPhonebookEntryEvent(Phonebook.Count, name, number, entry);
-                _alerter.SendAlert(alertEvent);
+                await _alerter.SendAlertAsync(alertEvent);
             }
         }
     }

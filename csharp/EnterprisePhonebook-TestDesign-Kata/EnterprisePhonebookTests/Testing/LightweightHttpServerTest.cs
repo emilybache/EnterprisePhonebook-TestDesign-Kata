@@ -6,16 +6,16 @@ namespace SammanCoaching.Phonebook.Tests.Testing;
 public class LightweightHttpServerTest
 {
     [Test]
-    public void GetRequest()
+    public async Task GetRequest()
     {
         var server = HttpServerLifecycle.HttpServer;
         using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, server.Url + "/test");
 
-        using var response = client.Send(request);
+        using var response = await client.SendAsync(request);
 
         Assert.That((int)response.StatusCode, Is.EqualTo(200));
-        Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo("OK"));
+        Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo("OK"));
 
         Assert.That(server.Handler.LatestRequestType, Is.EqualTo("GET"));
         Assert.That(server.Handler.LatestRequestPath, Is.EqualTo("/test"));
@@ -23,7 +23,7 @@ public class LightweightHttpServerTest
     }
 
     [Test]
-    public void PutRequestWithBody()
+    public async Task PutRequestWithBody()
     {
         var server = HttpServerLifecycle.HttpServer;
         const string jsonData = "{\"name\":\"test\",\"value\":123}";
@@ -33,10 +33,10 @@ public class LightweightHttpServerTest
             Content = new StringContent(jsonData, Encoding.UTF8, "application/json"),
         };
 
-        using var response = client.Send(request);
+        using var response = await client.SendAsync(request);
 
         Assert.That((int)response.StatusCode, Is.EqualTo(200));
-        Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo("OK"));
+        Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo("OK"));
 
         Assert.That(server.Handler.LatestRequestType, Is.EqualTo("PUT"));
         Assert.That(server.Handler.LatestRequestPath, Is.EqualTo("/api/data"));
@@ -44,17 +44,17 @@ public class LightweightHttpServerTest
     }
 
     [Test]
-    public void ErrorResponse()
+    public async Task ErrorResponse()
     {
         var server = HttpServerLifecycle.HttpServer;
         server.Handler.SetResponse(404, "Not Found");
         using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, server.Url + "/missing");
 
-        using var response = client.Send(request);
+        using var response = await client.SendAsync(request);
 
         Assert.That((int)response.StatusCode, Is.EqualTo(404));
-        Assert.That(response.Content.ReadAsStringAsync().Result, Is.EqualTo("Not Found"));
+        Assert.That(await response.Content.ReadAsStringAsync(), Is.EqualTo("Not Found"));
 
         Assert.That(server.Handler.LatestRequestType, Is.EqualTo("GET"));
         Assert.That(server.Handler.LatestRequestPath, Is.EqualTo("/missing"));
