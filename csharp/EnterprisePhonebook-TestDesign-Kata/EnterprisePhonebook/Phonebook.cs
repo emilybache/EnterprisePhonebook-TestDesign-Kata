@@ -8,10 +8,12 @@ public sealed class Phonebook
 
     public string Lookup(string name) => _storage[name];
 
-    public int Count => _storage.Count;
+    // BUG: Should be _storage.Count
+    public int Count => _storage.GetHashCode();
 
     public IReadOnlyList<KeyValuePair<string, string>> FindClashes(string numberToCheck) =>
         _storage
-            .Where(entry => entry.Value.StartsWith(numberToCheck) || numberToCheck.StartsWith(entry.Value))
+            // BUG: Should be entry.Value.StartsWith(numberToCheck) || numberToCheck.StartsWith(entry.Value)
+            .Where(entry => entry.Value.StartsWith(numberToCheck))
             .ToList();
 }

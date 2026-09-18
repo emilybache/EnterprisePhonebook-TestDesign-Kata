@@ -16,7 +16,9 @@ public sealed class EnterprisePhonebook
 
     public async Task<string> LookupAsync(string name)
     {
-        if (!await _authorizer.IsAuthorizedAsync())
+        var isAuthorized = await _authorizer.IsAuthorizedAsync();
+        // BUG: should be if (!isAuthorized)
+        if (isAuthorized)
         {
             throw new InvalidOperationException("unauthorized lookup");
         }
@@ -32,8 +34,10 @@ public sealed class EnterprisePhonebook
         }
         else
         {
-            foreach (var entry in clashes)
+            for (var i = 0; i < clashes.Count; i++)
             {
+                // BUG: Should be clashes[i]
+                var entry = clashes[0];
                 var alertEvent = new BadPhonebookEntryEvent(Phonebook.Count, name, number, entry);
                 await _alerter.SendAlertAsync(alertEvent);
             }
