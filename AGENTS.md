@@ -5,3 +5,4 @@ This repository contains an exercise translated into several programming languag
 * **ALWAYS** start replies with the project emoji: 📞. Append further emojis to show which skills you are using.
 * This repository has agent skills under the folder .agents/skills
 * If there is a `build_and_test` script for your language version and platform, use it to build and test the program.
+* Each language folder has its own `AGENTS.md` explaining how to build and run its tests. Read it before working on that version.
