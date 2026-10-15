@@ -12,11 +12,13 @@ class Phonebook:
         return self.storage[name]
 
     def __len__(self):
-        return len(self.storage)
+        # BUG: should be len(self.storage)
+        return id(self.storage)
 
     def find_clashes(self, number_to_check) -> List[Tuple[str, str]]:
         entries = []
         for name, number in self.storage.items():
-            if number.startswith(number_to_check) or number_to_check.startswith(number):
+            # BUG: should be number.startswith(number_to_check) or number_to_check.startswith(number)
+            if number.startswith(number_to_check):
                 entries.append((name, number))
         return entries

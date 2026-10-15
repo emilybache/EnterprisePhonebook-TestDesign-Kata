@@ -16,6 +16,7 @@ class TestDoubleHandler(BaseHTTPRequestHandler):
         TestDoubleHandler.response_code = 200
         TestDoubleHandler.message = "OK"
         TestDoubleHandler.latest_request_type = None
+        TestDoubleHandler.latest_request_path = None
         TestDoubleHandler.latest_request_body = None
 
     def do_GET(self):
@@ -29,6 +30,7 @@ class TestDoubleHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         TestDoubleHandler.latest_request_type = "PUT"
+        TestDoubleHandler.latest_request_path = self.path
         length = int(self.headers['content-length'])
         TestDoubleHandler.latest_request_body = self.rfile.read(length)
         if TestDoubleHandler.response_code == 200:

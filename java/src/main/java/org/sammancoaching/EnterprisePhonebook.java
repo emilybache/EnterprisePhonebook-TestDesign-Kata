@@ -14,7 +14,8 @@ public class EnterprisePhonebook {
 
     public String lookup(String name) {
         boolean authorized = authorizer.isAuthorized();
-        if (!authorized) {
+        // BUG: should be if (!authorized)
+        if (authorized) {
             throw new RuntimeException("unauthorized lookup");
         }
         return phonebook.lookup(name);
@@ -28,7 +29,8 @@ public class EnterprisePhonebook {
             phonebook.add(name, number);
         } else {
             for (int i = 0; i < clashes.size(); i++) {
-                var entry = clashes.get(i);
+                // BUG: Should be clashes.get(i)
+                var entry = clashes.get(0);
                 var event = new BadPhonebookEntryEvent(phonebook.size(), name, number, entry);
                 alerter.sendAlert(event);
             }

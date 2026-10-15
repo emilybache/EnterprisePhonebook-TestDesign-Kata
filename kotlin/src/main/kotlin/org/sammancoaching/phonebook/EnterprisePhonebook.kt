@@ -9,7 +9,8 @@ class EnterprisePhonebook(
 
     fun lookup(name: String): String {
         val authorized: Boolean = authorizer.isAuthorized
-        if (!authorized) {
+        // BUG: should be if (!authorized)
+        if (authorized) {
             throw RuntimeException("unauthorized lookup")
         }
         return phonebook.lookup(name)
@@ -21,7 +22,8 @@ class EnterprisePhonebook(
             phonebook.add(name, number)
         } else {
             for (i in 0..<clashes.size) {
-                val entry = clashes[i]
+                // BUG: Should be clashes[i]
+                val entry = clashes[0]
                 val event = BadPhonebookEntryEvent(
                     phonebook.size(),
                     name,

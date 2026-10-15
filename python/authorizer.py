@@ -12,7 +12,10 @@ class SecurityClearanceAuthorizer:
         self.location = location.netloc
 
     def authorize(self):
-        request = requests.get(self.url + "/authenticate")
+        try:
+            request = requests.get(self.url + "/authenticate")
+        except requests.ConnectionError:
+            return False
         # BUG: should be request.status_code == 200
         return request.status_code != 403
 
