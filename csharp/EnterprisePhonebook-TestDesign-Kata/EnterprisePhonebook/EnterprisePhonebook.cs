@@ -70,6 +70,7 @@ public sealed class EnterprisePhonebook
         // BUG: should be System.Text.Json.JsonSerializer.Serialize(data)
         var alertDataToSend = data.ToString();
         
+        // BUG: should be _alerterUrl + "/alert"
         using var request = new HttpRequestMessage(HttpMethod.Put, _alerterUrl)
         {
             Content = new StringContent(alertDataToSend, Encoding.UTF8, "application/json"),

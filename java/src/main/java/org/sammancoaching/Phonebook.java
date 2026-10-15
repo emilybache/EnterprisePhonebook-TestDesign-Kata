@@ -15,13 +15,14 @@ public class Phonebook {
 
     public String lookup(String name) {
         if (!storage.containsKey(name)) {
-            throw new RuntimeException("unknown name: " + name);
+            throw new NoSuchElementException("The given key '" + name + "' was not present in the phonebook.");
         }
         return storage.get(name);
     }
 
     public int size() {
-        return storage.size();
+        // BUG: Should be storage.size()
+        return System.identityHashCode(storage);
     }
 
 
@@ -30,7 +31,8 @@ public class Phonebook {
 
         for (Map.Entry<String, String> entry : storage.entrySet()) {
             String number = entry.getValue();
-            if (number.startsWith(numberToCheck) || numberToCheck.startsWith(number)) {
+            // BUG: Should be number.startsWith(numberToCheck) || numberToCheck.startsWith(number)
+            if (number.startsWith(numberToCheck)) {
                 entries.add(entry);
             }
         }

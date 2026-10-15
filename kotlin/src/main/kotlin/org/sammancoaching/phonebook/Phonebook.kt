@@ -8,14 +8,12 @@ class Phonebook {
     }
 
     fun lookup(name: String): String {
-        if (!storage.containsKey(name)) {
-            throw RuntimeException("unknown name: " + name)
-        }
-        return storage[name]!!
+        return storage.getValue(name)!!
     }
 
     fun size(): Int {
-        return storage.size
+        // BUG: Should be storage.size
+        return System.identityHashCode(storage)
     }
 
     fun findClashes(numberToCheck: String): MutableList<MutableMap.MutableEntry<String?, String?>> {
@@ -23,7 +21,8 @@ class Phonebook {
 
         for (entry in storage.entries) {
             val number: String = entry.value!!
-            if (number.startsWith(numberToCheck) || numberToCheck.startsWith(number)) {
+            // BUG: Should be number.startsWith(numberToCheck) || numberToCheck.startsWith(number)
+            if (number.startsWith(numberToCheck)) {
                 entries.add(entry)
             }
         }

@@ -13,7 +13,7 @@ public sealed class HttpServerLifecycle : Attribute, ITestAction
     private const string DefaultHost = "127.0.0.1";
     private const int DefaultPort = 9998;
 
-    [ThreadStatic]
+    // Not [ThreadStatic]: async tests can resume on another thread after an await.
     private static LightweightHttpServer? _currentHttpServer;
 
     public void BeforeTest(ITest test)
